@@ -1,0 +1,56 @@
+﻿@model EmployeeWebApp.Models.ViewModelClass
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<hr />
+<div class="row" >
+    <div class="col-md-4">
+        <form method="post" asp-controller="Employee" asp-action="CreateOrEdit" asp-antiforgery="true">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Employee_Id" class="control-label"></label>
+                <input asp-for="Employee_Id" class="form-control" readonly/>
+                <span asp-validation-for="Employee_Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Qualification" class="control-label"></label>
+                <input asp-for="Qualification" class="form-control" />
+                <span asp-validation-for="Qualification" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Department   " class="control-label"></label>
+                @Html.DropDownListFor(model => model.Department,(List<SelectListItem>)ViewBag.departmentdrop,"Select Department")
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<EmployeeWebApp.Models.EmployeesClasses>
+@{
+    ViewData["Title"] = "Index";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+</head>
+<body>
+<table id="myTable" class="display" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Qualification</th>
+            <th>Address</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+</table>
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                "ajax": {
+                    "url":"/Employee/LoadData",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "Name", "autoWidth": true },
+                    { "data": "Age", "autoWidth": true },
+                    { "data": "Qualification", "autoWidth": true },
+                    { "data": "Address", "autoWidth": true },
+                    { "data": "Department", "autoWidth": true }
+                ]
+            });
+        });
+    </script>
+</body>
+</html>
