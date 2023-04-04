@@ -65,5 +65,25 @@
                 </div>
             </div>
         </div>
+    <script type="text/javascript">
+        $(function () {
+            var msg = @ViewData["result"];
+            if (msg == '1') {
+                alert("User Details Inserted Successfully");
+                window.location.href = "@Url.Action("Index", "Login")";
+            }
+            else if (msg == '2') {
+                alert("Email / Password does not match")
+                window.location.href = "@Url.Action("Index", "Login")";
+            }
+            else if (msg == '3') {
+                alert("Login First !!!")
+                window.location.href = "@Url.Action("Index","Login")";
+            }
+            else if (msg == '4') {
+                alert("Registration Successfull")
+                window.location.href = "@Url.Action("Index","Login")";
+            });
+    </script>
 </body>
 </html>

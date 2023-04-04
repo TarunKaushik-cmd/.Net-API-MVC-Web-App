@@ -28,7 +28,10 @@ namespace EmployeeWebApp.Controllers
         readonly string Baseurl = "http://localhost:55440/api/Account/";
         public IActionResult Index()
         {
+            ViewData["result"] = TempData["Status"];
+            TempData["Status"] = 0;
             return View();
+ 
         }
 
         [HttpPost]
@@ -43,10 +46,16 @@ namespace EmployeeWebApp.Controllers
             var result = await client.PostAsync(Baseurl + "signup", stream);
             if (result.IsSuccessStatusCode)
             {
-                return View(1);
+                TempData["Status"] = 1;
+                return RedirectToAction("Index","Login");
             }
+            //if (result==BadRequest)
+            //{
+            //    TempData["Status"] = 4;
+            //    return RedirectToAction("Index");
+            //}
             else
-                return View();
+                return RedirectToAction("Index");
         }
     }
 }

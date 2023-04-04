@@ -30,12 +30,6 @@ namespace EmployeeWebApp.Models
         [Compare("Password", ErrorMessage = "Confirm password doesn't match, Type again !")]
         [DataType(DataType.Password)]
         public string Confirmpwd { get; set; }
-        public Nullable<bool> Is_Deleted { get; set; }
-
-        [Required(ErrorMessage = "Please enter Security Answer")]
-        [Display(Name = "Security Answer")]
-        public string SecurityAnwser { get; set; }
-
         public List<SignUpModel> Enrollsinfo { get; set; }
     }
 }
