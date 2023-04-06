@@ -21,20 +21,26 @@
 
         },
         dataTable_fun: function () {
-
-            $('#dataTables-example').dataTable();
+            $('#myTable').dataTable({
+                "ajax": {
+                    "url": "/Employee/LoadData",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "Name", "autoWidth": true },
+                    { "data": "Age", "autoWidth": true },
+                    { "data": "Qualification", "autoWidth": true },
+                    { "data": "Address", "autoWidth": true },
+                    { "data": "Department", "autoWidth": true }
+                ]
+            });
 
         },
        
         custom_fun:function()
         {
-            /*====================================
-             WRITE YOUR   SCRIPTS  BELOW
-            ======================================*/
-
-
-
-
+            $('.right').insertBefore('.btn-danger');
         },
 
     }

@@ -3,9 +3,39 @@
 @{
     ViewData["Title"] = "Create";
 }
-
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>FREE RESPONSIVE HORIZONTAL ADMIN</title>
+    <!-- BOOTSTRAP CORE STYLE  -->
+    <link href="../../Content/assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- FONT AWESOME STYLE  -->
+    <link href="../../Content/assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- CUSTOM STYLE  -->
+    <link href="../../Content/assets/css/style.css" rel="stylesheet" />
+    <!-- GOOGLE FONT -->
+    <link href='../../Content/assets/css/googlecss.css' rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+</head>
 <h1>Create</h1>
 <hr />
+<div class="navbar navbar-inverse set-radius-zero">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="Welcome">
+                <img src="../../Content/assets/img/logomain.png" />
+                <span style="position: absolute; top: 50%; transform: translateY(-50%); right: -20px;">welcome</span>
+            </a>
+        </div>
+        <div class="right-div">
+            @Html.ActionLink("LOG OUT","Logout","Login",new { @class = "btn btn-danger pull-right" })
+        </div>
+    </div>
+</div>
 <div class="row" >
     <div class="col-md-4">
         <form method="post" asp-controller="Employee" asp-action="CreateOrEdit" asp-antiforgery="true">
@@ -54,3 +84,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+</html>

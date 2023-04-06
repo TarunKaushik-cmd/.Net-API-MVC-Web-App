@@ -1,7 +1,8 @@
-using EmployeeWebApp.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,10 +43,8 @@ namespace EmployeeWebApp
             {
                 options.Authority = Configuration["Authentication:Authority"];
                 options.Audience = Configuration["Authentication:Audience"];
-             });
-            services.AddSession();
+            });
             services.AddHttpClient();
-            services.AddSingleton<AuthApiClient>();
             services.AddHttpContextAccessor();
         }
 

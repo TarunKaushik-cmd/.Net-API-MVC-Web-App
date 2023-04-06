@@ -9,27 +9,10 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>ENROLLMENT</title>
-    <link href="/Content/assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
-    <script type="text/javascript" src="/Content/assets/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/Content/assets/js/jquery.min.js"></script>
-    <link href="/Content/StyleSheet.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            $.ajax({
-                type: 'POST',
-                URL: '/Login/Login',
-                data: data,
-                dataType: 'JSON',
-                success: function (data) {
-                    data = data.status
-                    if (status == "1") {
-                        window.location.href = '@Url.Action("Index","Login")';
-                    }
-                }
-            });
-        });
-    </script>
+    <link href="../../Content/assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css" />
+    <script type="text/javascript" src="../../Content/assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../Content/assets/js/jquery.min.js"></script>
+    <link href="../../Content/StyleSheet.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -40,7 +23,7 @@
         <div class="container register">
             <div class="row">
                 <div class="col-md-3 register-left">
-                    <img src="/Content/assets/img/logomain.png" alt="" />
+                    <img src="../../Content/assets/img/logomain.png" alt="" />
                     <h3>Welcome</h3>
                 </div>
                 <div class="col-md-9 register-right">
@@ -57,7 +40,7 @@
                             <h3 class="register-heading">Login as a Employee</h3>
                             <div class="row register-form">
                                     <div class="form-group">
-                                        @Html.TextBoxFor(e => e.Email, new { @class = "form-control", placeholder = "Your Email *" })
+                                        @Html.TextBoxFor(e => e.Email, new { id="username", @class = "form-control", placeholder = "Your Email *" })
                                         @Html.ValidationMessageFor(e => e.Email)
                                     </div>
                                     <div class="form-group">
@@ -65,6 +48,7 @@
                                         <span id="result"></span>
                                         @Html.ValidationMessageFor(e => e.Password)
                                     </div>
+                                    <div class="text-danger" id="hidden-message"></div>
                                     <div class="col-md-6">
                                         <input type="submit" class="btnLogin" value="Login" />
                                     </div>
@@ -80,17 +64,32 @@
                         alert("User Details Inserted Successfully");
                         window.location.href = "@Url.Action("Index", "Login")";
                     }
-                    else if(msg=='2'){
-                        alert("Email / Password does not match")
+                    else if (msg == '2') {
+                        alert("Email / Password does not match");
                         window.location.href = "@Url.Action("Index", "Login")";
                     }
-                    else if(msg=='3'){
-                        alert("Login First !!!")
-                        window.location.href="@Url.Action("Index","Login")";
+                    else if (msg == '3') {
+                        alert("Login First !!!");
+                        window.location.href = "@Url.Action("Index","Login")";
                     }
                     else if (msg == '4') {
-                        alert("Registration Successfull")
+                        alert("Registration Successfull");
                         window.location.href = "@Url.Action("Index","Login")";
+                    }
+                    else if (msg == '401') {
+                        $('#hidden-message').text("Wrong Password");
+                    }
+                    else if (msg == '402') {
+                        $('#hidden-message').text("Wrong Email Or User Does not exist");
+                    }
+                })
+                $(function(){
+                    $('#password').focus(function(){
+                        $('#hidden-message').text("");
+                    });
+                    $('#username').focus(function () {
+                        $('#hidden-message').text("");
+                    })
                 });
             </script>
         </div>

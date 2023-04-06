@@ -40,6 +40,12 @@ body {
 .pad-botm {
     padding-bottom:30px;
 }
+button {
+    margin-top:10px;
+    margin-left:35px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
 
 
 /* =============================================================
@@ -69,11 +75,17 @@ background-color: #FFF;
 border-color: rgba(155, 153, 153, 0.23);
 
 }
-
-.navbar {
-    min-height: 90px;
-    margin-bottom: 0px;
-   
+p1 {
+    margin-left:48%;
+}
+p {
+    padding:3px 7px 3px 7px;
+}
+ul {
+    list-style-type:none;
+}
+ul li:first-child {
+    font-size:x-large;
 }
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border-color:transparent;

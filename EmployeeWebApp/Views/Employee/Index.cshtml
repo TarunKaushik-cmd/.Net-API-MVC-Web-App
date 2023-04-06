@@ -5,9 +5,42 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>FREE RESPONSIVE HORIZONTAL ADMIN</title>
+    <!-- BOOTSTRAP CORE STYLE  -->
+    <link href="../../Content/assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- FONT AWESOME STYLE  -->
+    <link href="../../Content/assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- CUSTOM STYLE  -->
+    <link href="../../Content/assets/css/style.css" rel="stylesheet" />
+    <!-- GOOGLE FONT -->
+    <link href='../../Content/assets/css/googlecss.css' rel='stylesheet' type='text/css' />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 </head>
 <body>
+        <div class="navbar navbar-inverse set-radius-zero">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="Welcome">
+                    <img src="../../Content/assets/img/logomain.png"  />
+                </a>
+            </div>
+            <ul>
+                <li>@if (!string.IsNullOrEmpty(ViewData["UserName"].ToString()))
+                {
+                    <a href="welcome" >
+                        @(ViewData["UserName"])
+                    </a>
+                }</li>
+                <li>
+                <button>@Html.ActionLink("LOG OUT","Logout","Login")</button>
+                </li>
+            </ul>
+        </div>
+    </div>
 <table id="myTable" class="display" width="100%" cellspacing="0">
     <thead>
         <tr>
@@ -18,26 +51,15 @@
             <th>Department</th>
         </tr>
     </thead>
-    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable({
-                "ajax": {
-                    "url":"/Employee/LoadData",
-                    "type": "GET",
-                    "datatype": "json"
-                },
-                "columns": [
-                    { "data": "Name", "autoWidth": true },
-                    { "data": "Age", "autoWidth": true },
-                    { "data": "Qualification", "autoWidth": true },
-                    { "data": "Address", "autoWidth": true },
-                    { "data": "Department", "autoWidth": true }
-                ]
-            });
-        });
-    </script>
 </table>
+    <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+    <!-- CORE JQUERY  -->
+    <script src="../../Content/assets/js/jquery-3.6.4.js"></script>
+    <!-- BOOTSTRAP SCRIPTS  -->
+    <script src="../../Content/assets/js/bootstrap.js"></script>
+    <!--DataTabel-->
+    <script src="../../js/jquery.dataTables.js"></script>
+    <!-- CUSTOM SCRIPTS  -->
+    <script src="../../Content/assets/js/custom.js"></script>
 </body>
 </html>

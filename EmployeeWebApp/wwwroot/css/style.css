@@ -12,6 +12,13 @@
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     margin: 1rem;
 }
+p {
+    padding: 2%;
+}
+p1 {
+    margin-left: 45%;
+    font-size: x-large;
+}
 
 h1 {
     text-align: center;

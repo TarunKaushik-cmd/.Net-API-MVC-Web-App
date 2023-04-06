@@ -7,6 +7,9 @@
 
 
 <!DOCTYPE html>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
@@ -22,7 +25,6 @@
     <link href="../../Content/assets/css/style.css" rel="stylesheet" />
     <!-- GOOGLE FONT -->
     <link href='../../Content/assets/css/googlecss.css' rel='stylesheet' type='text/css' />
-
 </head>
 <body>
     <div class="navbar navbar-inverse set-radius-zero">
@@ -30,59 +32,39 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="Welcome">
                     <img src="../../Content/assets/img/logomain.png"  />
-                    <span style="position: absolute; top: 50%; transform: translateY(-50%); right: -20px;">welcome</span>
                 </a>
             </div>
-            <div class="right-div">
-                @Html.ActionLink("LOG OUT","Logout","Login",new { @class = "btn btn-danger pull-right" })
-            </div>
+            <ul>
+                <li>@if (!string.IsNullOrEmpty(Model.FirstName))
+                {
+                    <a href="welcome" >
+                        @(Model.FirstName + " " + Model.LastName)
+                    </a>
+                }</li>
+                <li>
+                <button>@Html.ActionLink("LOG OUT","Logout","Login")</button>
+                </li>
+            </ul>
         </div>
     </div>
     <!-- LOGO HEADER END-->
     <section class="menu-section">
-        @if (!string.IsNullOrEmpty(Model.FirstName))
-        {
-            <a href="welcome" class="menu-top-active">
-                @(Model.FirstName + " " + Model.LastName)
-            </a>
-        }
-    </section>
-    <!-- MENU SECTION END-->
-    <table id="myTable" class="display" width="100%" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Age</th>
-                <th>Qualification</th>
-                <th>Address</th>
-                <th>Department</th>
-            </tr>
-        </thead>
-      </table>
-        <script>
-            $(document).ready(function () {
-                $('#myTable').DataTable({
-                    "ajax": {
-                        "url": "/Employee/LoadData",
-                        "type": "GET",
-                        "datatype": "json"
-                    },
-                    "columns": [
-                        { "data": "Name", "autoWidth": true },
-                        { "data": "Age", "autoWidth": true },
-                        { "data": "Qualification", "autoWidth": true },
-                        { "data": "Address", "autoWidth": true },
-                        { "data": "Department", "autoWidth": true }
-                    ]
-                });
-            });
-        </script>
+     </section>
+     <div>
+         <p1> Welcome </p1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras nunc arcu, scelerisque eu nisl sit amet, sollicitudin vestibulum libero. Nunc commodo risus nisi. Morbi malesuada tortor nec enim varius, ultricies efficitur lorem ornare. Pellentesque in efficitur justo, ac interdum neque. Quisque semper nibh a tellus sollicitudin accumsan. In in nibh id eros dignissim interdum at quis neque. Nullam molestie turpis ornare sapien pellentesque, eget ullamcorper eros posuere. Vestibulum a mauris pharetra, tristique est non, hendrerit sapien. Nunc sit amet lectus id sapien accumsan laoreet at sit amet diam.</p>
+        <p>Fusce id massa mauris. Nullam lobortis eu mauris nec tincidunt. Sed et ligula posuere, lacinia lacus ac, auctor odio. Aliquam hendrerit augue ex, vel scelerisque nisl varius vel. Nulla eleifend blandit commodo. Curabitur sed ante quis neque ultrices porttitor posuere sit amet libero. Suspendisse quis erat eleifend, auctor lorem nec, sollicitudin ex. Vivamus in ipsum et metus mattis finibus. Duis sem urna, suscipit eget odio non, egestas fringilla eros. Integer accumsan neque tincidunt venenatis consectetur. Vivamus tortor mauris, vehicula imperdiet purus sit amet, eleifend blandit mi.</p>
+        <p>
+            Sed semper ultricies imperdiet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Praesent fringilla nulla at lobortis pharetra. Proin a pulvinar ligula. Morbi et leo et lorem placerat egestas. Sed ut metus sed lectus gravida congue at at ante. Suspendisse sed tellus eu ligula elementum volutpat at sit amet justo. Nunc eu rhoncus quam, in vestibulum nisl. Ut dolor felis, placerat sit amet ante non, ultrices molestie metus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin vitae rhoncus nulla. Vestibulum sit amet eros at lacus gravida porta ac et ligula. In ut massa faucibus, laoreet erat id, fringilla lacus. Curabitur vitae sem ultricies massa porttitor vehicula.
+        </p>
+        <a href="~/Employee/Index" >Go to Employee Database</a>
+     </div>
     <!-- CONTENT-WRAPPER SECTION END-->
     <section class="footer-section">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    &copy; 2023 Designed by : Tarun Kaushik</a>
+                    <a>&copy; 2023 Designed by : Tarun Kaushik</a>
                 </div>
 
             </div>
@@ -94,11 +76,18 @@
     <script src="../../Content/assets/js/jquery-3.6.4.js"></script>
     <!-- BOOTSTRAP SCRIPTS  -->
     <script src="../../Content/assets/js/bootstrap.js"></script>
-    <!-- JQUERY PLUGIN -->
-    <script src="~/Content/assets/js/jquery.min.js"></script>
     <!--DataTabel-->
     <script src="../../js/jquery.dataTables.js"></script>
     <!-- CUSTOM SCRIPTS  -->
     <script src="../../Content/assets/js/custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            var token = @ViewData["result"];
+            var msg = @ViewBag.msg;
+            if (msg == 3) {
+                window.location.href = '@Url.Action("Index", "Login")';
+            }
+        });
+    </script>
 </body>
 </html>

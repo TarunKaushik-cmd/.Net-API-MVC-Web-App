@@ -1,5 +1,4 @@
 ﻿using EmployeeWebApp.Models;
-using EmployeeWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -20,12 +19,9 @@ namespace EmployeeWebApp.Controllers
 {
     public class SignUpController : Controller
     {
-        private readonly AuthApiClient _apiClient;
-        public SignUpController(AuthApiClient apiClient)
-        {
-            _apiClient = apiClient;
-        }
-        readonly string Baseurl = "http://localhost:55440/api/Account/";
+        readonly string Baseurl = "http://192.168.29.103:55440/api/Account/";
+        public SignUpController() { }
+        
         public IActionResult Index()
         {
             ViewData["result"] = TempData["Status"];
@@ -49,11 +45,11 @@ namespace EmployeeWebApp.Controllers
                 TempData["Status"] = 1;
                 return RedirectToAction("Index","Login");
             }
-            //if (result==BadRequest)
-            //{
-            //    TempData["Status"] = 4;
-            //    return RedirectToAction("Index");
-            //}
+            if ((int)result.StatusCode==401)
+            {
+                TempData["Status"] = 4;
+                return RedirectToAction("Index");
+            }
             else
                 return RedirectToAction("Index");
         }

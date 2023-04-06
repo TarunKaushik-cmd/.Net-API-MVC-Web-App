@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Net.Http;
@@ -8,25 +7,19 @@ using System;
 using EmployeeWebApp.Models;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
-using RestSharp;
-using System.Text.Json.Nodes;
 using System.Text;
-using System.Composition;
-using System.Dynamic;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Web.Mvc;
+using Microsoft.AspNetCore.Http;
 using SelectListItem = Microsoft.AspNetCore.Mvc.Rendering.SelectListItem;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using ActionResult = Microsoft.AspNetCore.Mvc.ActionResult;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
-using ContentResult = Microsoft.AspNetCore.Mvc.ContentResult;
-using System.Collections;
 
 namespace EmployeeWebApp.Controllers
 {
     public class EmployeeController : Microsoft.AspNetCore.Mvc.Controller
     {
-        readonly string Baseurl = "https://localhost:55440/";
+        readonly string Baseurl = "http://192.168.29.103:55440/";
 
         [HttpPost]
         public ActionResult Search(string txt)
@@ -36,57 +29,37 @@ namespace EmployeeWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Index(string sortOrder)
+        public async Task<ActionResult> Index(string sortOrder,bool request=false)
         {
-            string deptname = (string)TempData["param"];
-            int.TryParse(deptname, out int id);
-            IEnumerable<EmployeesClasses> employees = new List<EmployeesClasses>();
-            HttpResponseMessage httpResponseMessage;
-            if (id != 0)
+            HttpContext.Request.Cookies.TryGetValue("UserName", out string _userName);
+            ViewData["UserName"] = _userName;
+            if (request)
             {
-                httpResponseMessage = await ApiConnectAsync("GetById", id);
-                if (httpResponseMessage.IsSuccessStatusCode)
-                {
-                    var employeeResponseJson = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                    employees.ToList().Add(JsonConvert.DeserializeObject<EmployeesClasses>(employeeResponseJson));
-                }
-            }
-            else if (!string.IsNullOrEmpty(deptname))
-            {
-                httpResponseMessage = await ApiConnectAsync("GetByDept", deptname);
+                var employees = await GetDataAsync("XML");
+                employees = Sorter(employees, sortOrder);
+                return View(employees);
             }
             else
-            {
-                httpResponseMessage = await ApiConnectAsync("GetAll", null);
-            }
-            if (httpResponseMessage.IsSuccessStatusCode)
-            {
-                var EmpResponse = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                employees = JsonConvert.DeserializeObject<List<EmployeesClasses>>(EmpResponse);
-            }
-            employees = Sorter(employees, sortOrder);
-            return View(employees);
+                return View();
         }
-
-        public async Task<ActionResult> LoadDataAsync()
+        [HttpGet]
+        public async Task<ActionResult> LoadData()
         {
-            HttpResponseMessage httpResponseMessage;
-            httpResponseMessage = await ApiConnectAsync("GetAll", null);
-            var EmpResponse = httpResponseMessage.Content.ReadAsStringAsync().Result;
-            IEnumerable<EmployeesClasses> employees = JsonConvert.DeserializeObject<List<EmployeesClasses>>(EmpResponse);
-            var res=JsonConvert.SerializeObject(employees);
+            var res=await GetDataAsync();
             return Json(new {data=res},JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> CreateAsync(ViewModelClass? viewModel)
         {
-                HttpResponseMessage Res = await ApiConnectAsync("Department", null);
-                var temp1 = JsonConvert.DeserializeObject<List<DepartmentClass>>(Res.Content.ReadAsStringAsync().Result);
-                ViewBag.departmentdrop = temp1.Select(x => new SelectListItem { Text = x.Departments, Value = x.Departments.ToString() }).ToList();
-                return View(viewModel);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            HttpResponseMessage Res = await ApiConnectAsync("Department", null, token);
+            var temp1 = JsonConvert.DeserializeObject<List<DepartmentClass>>(Res.Content.ReadAsStringAsync().Result);
+            ViewBag.departmentdrop = temp1.Select(x => new SelectListItem { Text = x.Departments, Value = x.Departments.ToString() }).ToList();
+            return View(viewModel);
         }
         public async Task<ActionResult> CreateOrEdit(IFormCollection data)
         {
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
             EmployeesClasses employee = new EmployeesClasses();
             int.TryParse(data["Employee_Id"], out int id);
             if (id != 0) employee.Employee_Id = id; else employee.Employee_Id = 0;
@@ -95,7 +68,7 @@ namespace EmployeeWebApp.Controllers
             employee.Age = int.Parse(data["Age"]);
             employee.Qualification = data["Qualification"];
             employee.Department = data["Department"];
-            HttpResponseMessage res = await ApiConnectAsync("CreateOrEdit", employee);
+            HttpResponseMessage res = await ApiConnectAsync("CreateOrEdit", employee,token);
             if (res.IsSuccessStatusCode)
             {
                 return Content("<script>alert('Employee Added Successfully');</script>");
@@ -106,7 +79,8 @@ namespace EmployeeWebApp.Controllers
 
         public async Task<ActionResult> Edit(int? id)
         {
-            HttpResponseMessage Res = await ApiConnectAsync("GetById", id);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            HttpResponseMessage Res = await ApiConnectAsync("GetById", id,token);
             EmployeesClasses EmpInfo = JsonConvert.DeserializeObject<EmployeesClasses>(Res.Content.ReadAsStringAsync().Result);
             ViewModelClass viewModel = new ViewModelClass()
             {
@@ -122,7 +96,8 @@ namespace EmployeeWebApp.Controllers
         }
         public async Task<ActionResult> DeleteEmployee(int id)
         {
-            HttpResponseMessage httpRequestMessage = await ApiConnectAsync("Delete", id);
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            HttpResponseMessage httpRequestMessage = await ApiConnectAsync("Delete", id, token);
             if (httpRequestMessage.IsSuccessStatusCode)
             {
                 return Json(new { sum = "Employee Deleted Successfully" });
@@ -132,12 +107,13 @@ namespace EmployeeWebApp.Controllers
                 return Json(new { sum = "Employee Cannot be Deleted" });
             }
         }
-        private async Task<HttpResponseMessage> ApiConnectAsync(string request, dynamic? obj)
+        private async Task<HttpResponseMessage> ApiConnectAsync(string request, dynamic? obj,string token="")
         {
             using var client = new HttpClient();
             client.BaseAddress = new Uri(Baseurl);
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             switch (request)
             {
                 case "Department": return await client.GetAsync(Baseurl + "api/Department/");
@@ -150,7 +126,6 @@ namespace EmployeeWebApp.Controllers
                 case "GetAll": return await client.GetAsync("api/Employee/get");
                 case "Delete": return await client.DeleteAsync("api/Employee" + string.Format("?id={0}", obj));
                 default: return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-
             }
         }
         private IEnumerable<EmployeesClasses> Sorter(IEnumerable<EmployeesClasses> empInfo,string sortOrder)
@@ -174,6 +149,40 @@ namespace EmployeeWebApp.Controllers
                 _ => empInfo.OrderBy(s => s.Name),
             };
             return empInfo;
+        }
+        private async Task<dynamic> GetDataAsync(string type="")
+        {
+            IEnumerable<EmployeesClasses> employees = new List<EmployeesClasses>();
+            HttpContext.Request.Cookies.TryGetValue("token", out string token);
+            string deptname = (string)TempData["param"];
+            int.TryParse(deptname, out int id);
+            HttpResponseMessage httpResponseMessage;
+            if (id != 0)
+            {
+                httpResponseMessage = await ApiConnectAsync("GetById", id, token);
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    var employeeResponseJson = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                    employees.ToList().Add(JsonConvert.DeserializeObject<EmployeesClasses>(employeeResponseJson));
+                }
+            }
+            else if (!string.IsNullOrEmpty(deptname))
+            {
+                httpResponseMessage = await ApiConnectAsync("GetByDept", deptname, token);
+            }
+            else
+            {
+                httpResponseMessage = await ApiConnectAsync("GetAll", null, token);
+            }
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                var EmpResponse = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                employees = JsonConvert.DeserializeObject<List<EmployeesClasses>>(EmpResponse);
+            }
+            if(type=="XML")
+                return employees;
+            else
+                return JsonConvert.SerializeObject(employees);
         }
     }
 }
