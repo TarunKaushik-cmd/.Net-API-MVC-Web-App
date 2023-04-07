@@ -27,7 +27,7 @@ namespace EmployeeWebApp.Models
     }
     public class DepartmentClass
     {
-        public string Departments { get; set; }
+        public string DeptName { get; set; }
     }
     
 }

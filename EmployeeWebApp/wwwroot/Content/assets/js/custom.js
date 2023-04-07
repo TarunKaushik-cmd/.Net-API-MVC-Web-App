@@ -20,23 +20,7 @@
             })
 
         },
-        dataTable_fun: function () {
-            $('#myTable').dataTable({
-                "ajax": {
-                    "url": "/Employee/LoadData",
-                    "type": "GET",
-                    "datatype": "json"
-                },
-                "columns": [
-                    { "data": "Name", "autoWidth": true },
-                    { "data": "Age", "autoWidth": true },
-                    { "data": "Qualification", "autoWidth": true },
-                    { "data": "Address", "autoWidth": true },
-                    { "data": "Department", "autoWidth": true }
-                ]
-            });
-
-        },
+        //dataTable_fun: function ();
        
         custom_fun:function()
         {
@@ -48,7 +32,7 @@
    
     $(document).ready(function () {
         mainApp.slide_fun();
-        mainApp.dataTable_fun();
+        //mainApp.dataTable_fun();
         mainApp.custom_fun();
     });
 }(jQuery));

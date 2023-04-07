@@ -20,6 +20,12 @@ namespace EmployeeWebApp.Controllers
     public class EmployeeController : Microsoft.AspNetCore.Mvc.Controller
     {
         readonly string Baseurl = "http://192.168.29.103:55440/";
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public EmployeeController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
 
         [HttpPost]
         public ActionResult Search(string txt)
@@ -29,18 +35,32 @@ namespace EmployeeWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Index(string sortOrder,bool request=false)
+        public async Task<ActionResult> Index(string _userName,string sortOrder="",bool request=false)
         {
-            HttpContext.Request.Cookies.TryGetValue("UserName", out string _userName);
-            ViewData["UserName"] = _userName;
+                Response.Headers["Cache-Control"] = "no-cache, no-store";
+                Response.Headers["Expires"] = "-1";
+                Response.Headers["Pragma"] = "no-cache";
+                HttpContext.Response.Cookies.Append(
+                                "UserName", _userName,
+                                new Microsoft.AspNetCore.Http.CookieOptions
+                                {
+                                    Expires = DateTime.Now.AddHours(1),
+                                    IsEssential = true,
+                                    HttpOnly = true,
+                                    Secure = true
+                                });
+                ViewData["UserName"] = _userName;
             if (request)
             {
-                var employees = await GetDataAsync("XML");
-                employees = Sorter(employees, sortOrder);
-                return View(employees);
+
+                var employees = await GetDataAsync("JSON");
+                ViewBag.JSON=employees;
+                return View();
             }
             else
+            {
                 return View();
+            }
         }
         [HttpGet]
         public async Task<ActionResult> LoadData()
@@ -49,16 +69,40 @@ namespace EmployeeWebApp.Controllers
             return Json(new {data=res},JsonRequestBehavior.AllowGet);
         }
 
-        public async Task<ActionResult> CreateAsync(ViewModelClass? viewModel)
+        public async Task<ActionResult> Create(ViewModelClass? viewModel)
         {
-            HttpContext.Request.Cookies.TryGetValue("token", out string token);
-            HttpResponseMessage Res = await ApiConnectAsync("Department", null, token);
-            var temp1 = JsonConvert.DeserializeObject<List<DepartmentClass>>(Res.Content.ReadAsStringAsync().Result);
-            ViewBag.departmentdrop = temp1.Select(x => new SelectListItem { Text = x.Departments, Value = x.Departments.ToString() }).ToList();
+            Response.Headers["Cache-Control"] = "no-cache, no-store";
+            Response.Headers["Expires"] = "-1";
+            Response.Headers["Pragma"] = "no-cache";
+            if (HttpContext.Request.Cookies.TryGetValue("token", out string token))
+            {
+                HttpResponseMessage Res = await ApiConnectAsync("Department", null, token);
+                if (Res.IsSuccessStatusCode)
+                {
+                    var temp1 = JsonConvert.DeserializeObject<List<DepartmentClass>>(await Res.Content.ReadAsStringAsync());
+                    if (temp1 != null && temp1.Any())
+                    {
+                        ViewBag.departmentdrop = temp1
+                            .Select(x => new SelectListItem { Text = x.DeptName ?? "", Value = x.DeptName?.ToString() ?? "" })
+                            .ToList();
+                    }
+                    HttpContext.Request.Cookies.TryGetValue("UserName", out string _userName);
+                    ViewData["UserName"] = _userName;
+                }
+            }
+            else
+            {
+                RedirectToAction("Login", "Login");
+            }
+            if (viewModel == null)
+            {
+                viewModel = new ViewModelClass();
+            }
             return View(viewModel);
         }
         public async Task<ActionResult> CreateOrEdit(IFormCollection data)
         {
+
             HttpContext.Request.Cookies.TryGetValue("token", out string token);
             EmployeesClasses employee = new EmployeesClasses();
             int.TryParse(data["Employee_Id"], out int id);
@@ -109,14 +153,15 @@ namespace EmployeeWebApp.Controllers
         }
         private async Task<HttpResponseMessage> ApiConnectAsync(string request, dynamic? obj,string token="")
         {
-            using var client = new HttpClient();
+            var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(Baseurl);
+            client.Timeout = new TimeSpan(0, 0, 30);
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             switch (request)
             {
-                case "Department": return await client.GetAsync(Baseurl + "api/Department/");
+                case "Department": return await client.GetAsync(Baseurl + "api/Department/get");
                 case "CreateOrEdit":
                     string jsonobject = JsonConvert.SerializeObject(obj);
                     StringContent stream = new StringContent(jsonobject, Encoding.UTF8, "application/json");

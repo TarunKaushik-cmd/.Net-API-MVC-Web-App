@@ -1,6 +1,14 @@
 ﻿@model EmployeeWebApp.Models.ViewModelClass
-
 @{
+    if(ViewData["UserName"] == null)
+    {
+        <script>
+            $(function () {
+                    window.location.href = '@Url.Action("Index", "Login")';
+                }
+            });
+        </script>
+    }
     ViewData["Title"] = "Create";
 }
 <!DOCTYPE html>
@@ -10,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>FREE RESPONSIVE HORIZONTAL ADMIN</title>
+    <title>Add New Employee</title>
     <!-- BOOTSTRAP CORE STYLE  -->
     <link href="../../Content/assets/css/bootstrap.css" rel="stylesheet" />
     <!-- FONT AWESOME STYLE  -->
@@ -20,22 +28,43 @@
     <!-- GOOGLE FONT -->
     <link href='../../Content/assets/css/googlecss.css' rel='stylesheet' type='text/css' />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
-</head>
-<h1>Create</h1>
-<hr />
-<div class="navbar navbar-inverse set-radius-zero">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="Welcome">
-                <img src="../../Content/assets/img/logomain.png" />
-                <span style="position: absolute; top: 50%; transform: translateY(-50%); right: -20px;">welcome</span>
-            </a>
-        </div>
-        <div class="right-div">
-            @Html.ActionLink("LOG OUT","Logout","Login",new { @class = "btn btn-danger pull-right" })
+ </head>
+<body>
+    <div class="navbar navbar-inverse set-radius-zero">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="../Login/Welcome">
+                    <img src="../../Content/assets/img/logomain.png" />
+                    <span style="position: absolute; top: 50%; transform: translateY(-50%); right: -20px;">welcome</span>
+                </a>
+            </div>
+            <ul>
+                <li>
+                    @try{
+                        if ((!string.IsNullOrEmpty(ViewData["UserName"].ToString())) || (ViewData["UserName"] == null))
+                        {
+                            <a href="welcome">
+                                @(
+                                ViewData["UserName"]
+                                )
+                            </a>
+                        }
+                    }
+                    catch(Exception e){
+                        <script>
+                            $(function () {
+                                window.location.href = '@Url.Action("Index", "Login")';
+                            }
+                             );
+                        </script>
+                    }
+                </li>
+                <li>
+                    <button id="bt-logout">@Html.ActionLink("LOG OUT","Logout","Login")</button>
+                </li>
+            </ul>
         </div>
     </div>
-</div>
 <div class="row" >
     <div class="col-md-4">
         <form method="post" asp-controller="Employee" asp-action="CreateOrEdit" asp-antiforgery="true">
@@ -76,11 +105,10 @@
         </form>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+</body>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

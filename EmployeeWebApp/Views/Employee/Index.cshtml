@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<EmployeeWebApp.Models.EmployeesClasses>
 @{
+    var json = ViewBag.JSON;
     ViewData["Title"] = "Index";
 }
 <!DOCTYPE html>
@@ -24,19 +25,20 @@
         <div class="navbar navbar-inverse set-radius-zero">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="Welcome">
+                <a class="navbar-brand" href="../Login/Welcome">
                     <img src="../../Content/assets/img/logomain.png"  />
                 </a>
             </div>
+            <button id="bt-create" onclick="location.href='../Employee/Create'">Enter New Employee</button>
             <ul>
-                <li>@if (!string.IsNullOrEmpty(ViewData["UserName"].ToString()))
+                <li>@if((!string.IsNullOrEmpty(ViewData["UserName"].ToString()))||(ViewData["UserName"]==null))
                 {
                     <a href="welcome" >
                         @(ViewData["UserName"])
                     </a>
                 }</li>
                 <li>
-                <button>@Html.ActionLink("LOG OUT","Logout","Login")</button>
+                <button id="bt-logout">@Html.ActionLink("LOG OUT","Logout","Login")</button>
                 </li>
             </ul>
         </div>
@@ -51,6 +53,8 @@
             <th>Department</th>
         </tr>
     </thead>
+    <tbody>
+    </tbody>
 </table>
     <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
     <!-- CORE JQUERY  -->
@@ -61,5 +65,23 @@
     <script src="../../js/jquery.dataTables.js"></script>
     <!-- CUSTOM SCRIPTS  -->
     <script src="../../Content/assets/js/custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            var data = @Html.Raw(json);
+            $('#myTable').DataTable({
+                "ajax": {
+                    var json=@ViewBag.JSON;
+                },
+                "columns": [
+                    { "data": "EmployeeId" },
+                    { "data": "Name" },
+                    { "data": "Age" },
+                    { "data": "Qualification" },
+                    { "data": "Address" },
+                    { "data": "Department" }
+                ]
+            });
+        });
+    </script>
 </body>
 </html>

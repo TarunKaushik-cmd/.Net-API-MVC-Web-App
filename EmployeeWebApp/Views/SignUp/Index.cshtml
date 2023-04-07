@@ -57,6 +57,7 @@
                                         @Html.PasswordFor(e => e.Confirmpwd, new { @class = "form-control", placeholder = "Confirm Password *" })
                                         @Html.ValidationMessageFor(e => e.Confirmpwd)
                                     </div>
+                                    <div class="text-danger" id="hidden-message"></div>
                                     <input type="submit" class="btnRegister" value="Register"/>
                             </div>
                             </form>
@@ -72,21 +73,9 @@
                 alert("User Details Inserted Successfully");
                 window.location.href = "@Url.Action("Index", "Login")";
             }
-            else if (msg == '2') {
-                alert("Email / Password does not match")
-                window.location.href = "@Url.Action("Index", "Login")";
-            }
-            else if (msg == '3') {
-                alert("Login First !!!")
-                window.location.href = "@Url.Action("Index","Login")";
-            }
-            else if (msg == '4') {
-                alert("Registration Successfull")
-                window.location.href = "@Url.Action("Index","Login")";
-            else if (msg == '401') {
-                alert("Registration Successfull")
-                window.location.href = "@Url.Action("Index","Login")";
-            });
+            else if (msg == '400') {
+                $('#hidden-message').text("Email Already Exist");
+            }});
     </script>
 </body>
 </html>

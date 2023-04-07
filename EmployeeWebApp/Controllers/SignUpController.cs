@@ -45,9 +45,9 @@ namespace EmployeeWebApp.Controllers
                 TempData["Status"] = 1;
                 return RedirectToAction("Index","Login");
             }
-            if ((int)result.StatusCode==401)
+            if ((int)result.StatusCode==400)
             {
-                TempData["Status"] = 4;
+                TempData["Status"] = 400;
                 return RedirectToAction("Index");
             }
             else

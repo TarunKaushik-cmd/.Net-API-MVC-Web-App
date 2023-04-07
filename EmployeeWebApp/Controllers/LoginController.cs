@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text;
+using NuGet.Protocol;
+using System.Net.Cache;
 
 namespace EmployeeWebApp.Controllers
 {
@@ -70,6 +72,9 @@ namespace EmployeeWebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Welcome(string email)
         {
+            Response.Headers["Cache-Control"] = "no-cache, no-store";
+            Response.Headers["Expires"] = "-1";
+            Response.Headers["Pragma"] = "no-cache";
             if (HttpContext.Request.Cookies.TryGetValue("token", out string token))
             {
                 SignUpModel signUpModel = new SignUpModel();
