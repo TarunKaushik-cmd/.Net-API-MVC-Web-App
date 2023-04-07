@@ -20,16 +20,11 @@
             })
 
         },
-        //dataTable_fun: function ();
-       
         custom_fun:function()
         {
             $('.right').insertBefore('.btn-danger');
-        },
-
+        }
     }
-   
-   
     $(document).ready(function () {
         mainApp.slide_fun();
         //mainApp.dataTable_fun();

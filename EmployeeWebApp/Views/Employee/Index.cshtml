@@ -69,11 +69,9 @@
         $(document).ready(function () {
             var data = @Html.Raw(json);
             $('#myTable').DataTable({
-                "ajax": {
-                    var json=@ViewBag.JSON;
-                },
+                data: data,
                 "columns": [
-                    { "data": "EmployeeId" },
+                    { "data": "Employee_Id" },
                     { "data": "Name" },
                     { "data": "Age" },
                     { "data": "Qualification" },
